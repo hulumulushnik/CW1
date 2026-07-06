@@ -17,6 +17,7 @@ namespace CW1.Services
         public readonly TcpListener _listener;
         private readonly ConcurrentDictionary<TcpClient, NetworkStream> _clients = new();
         private readonly BlockChainService _blockChainService;
+        private readonly HashingService _hashingService = new();
 
         public TcpP2pService(BlockChainService blockChainService, int port)
         {
@@ -64,7 +65,6 @@ namespace CW1.Services
 
                     if (!string.IsNullOrEmpty(messageJson))
                     {
-                        Console.WriteLine($"Received: {messageJson}");
                         ProcessMessage(messageJson);
                     }
                 }
@@ -87,34 +87,68 @@ namespace CW1.Services
             switch (message.Type)
             {
                 case MessageType.NewBlock:
-                    var newBlock = JsonSerializer.Deserialize<BlockChainP411NEW.Models.Block>(message.Data);
+                    var newBlock = JsonSerializer.Deserialize<Block>(message.Data);
                     if (newBlock == null) return;
+
+                    string recomputedHash = _hashingService.ComputeHash(newBlock);
+                    if (recomputedHash != newBlock.Hash)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"[SECURITY] 🚨 Обнаружен фейковый блок!");
+                        Console.WriteLine($"           Заявлений хеш:     {newBlock.Hash[..32]}...");
+                        Console.WriteLine($"           Перерахований хеш: {recomputedHash[..32]}...");
+                        Console.ResetColor();
+                        return; 
+                    }
+
+                    int requiredDifficulty = _blockChainService.Difficulty;
+                    if (!HasRequiredDifficulty(newBlock.Hash, requiredDifficulty))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"[SECURITY] 🚨 Обнаружен фейковый блок!");
+                        Console.WriteLine($"           Хеш не відповідає складності мережі (Difficulty = {requiredDifficulty}).");
+                        Console.WriteLine($"           Отриманий хеш: {newBlock.Hash[..32]}...");
+                        Console.ResetColor();
+                        return;
+                    }
+
                     var lastBlock = _blockChainService.Chain[^1];
                     if (newBlock.Index == lastBlock.Index + 1 && newBlock.PreviousHash == lastBlock.Hash)
                     {
                         _blockChainService.Chain.Add(newBlock);
-                        Console.WriteLine($"New block added: {newBlock.Hash}");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"[P2P] ✅ Новий блок #{newBlock.Index} прийнято. Hash: {newBlock.Hash[..16]}...");
+                        Console.ResetColor();
                     }
                     else
                     {
-                        Console.WriteLine($"Invalid block received: {newBlock.Hash}");
+                        Console.WriteLine($"[P2P] ⚠️  Блок #{newBlock.Index} не вписується в ланцюг (Index/PreviousHash mismatch).");
                     }
                     break;
 
                 case MessageType.SyncChain:
-                    var receivedChain = JsonSerializer.Deserialize<List<BlockChainP411NEW.Models.Block>>(message.Data);
+                    var receivedChain = JsonSerializer.Deserialize<List<Block>>(message.Data);
                     if (receivedChain == null) return;
                     if (receivedChain.Count > _blockChainService.Chain.Count)
                     {
                         _blockChainService.Chain = receivedChain;
-                        Console.WriteLine($"Blockchain synchronized. New length: {receivedChain.Count}");
+                        Console.WriteLine($"[P2P] Blockchain synchronized. New length: {receivedChain.Count}");
                     }
                     break;
 
                 default:
-                    Console.WriteLine($"Unknown message type: {message.Type}");
+                    Console.WriteLine($"[P2P] Unknown message type: {message.Type}");
                     break;
             }
+        }
+
+        private static bool HasRequiredDifficulty(string hash, int difficulty)
+        {
+            if (string.IsNullOrEmpty(hash) || difficulty <= 0)
+                return difficulty <= 0;
+
+            string target = new string('0', difficulty);
+            return hash.StartsWith(target, StringComparison.Ordinal);
         }
 
         private void BroadcastMessage(P2pMessage message)
@@ -128,12 +162,10 @@ namespace CW1.Services
                 if (!client.Connected) continue;
                 try
                 {
-                    // Використовуємо leaveOpen: true, щоб не закривати потік
                     var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
                     writer.Write(messageLengthBytes, 0, messageLengthBytes.Length);
                     writer.Write(messageBytes, 0, messageBytes.Length);
                     writer.Flush();
-                    Console.WriteLine($"Broadcasted: {messageJson}");
                 }
                 catch (Exception ex)
                 {
@@ -142,7 +174,7 @@ namespace CW1.Services
             }
         }
 
-        public void BroadcastNewBlock(BlockChainP411NEW.Models.Block newBlock)
+        public void BroadcastNewBlock(Block newBlock)
         {
             var message = new P2pMessage(MessageType.NewBlock, JsonSerializer.Serialize(newBlock));
             BroadcastMessage(message);
