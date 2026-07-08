@@ -60,12 +60,91 @@ while (true)
         case "13": SaveWalletsMenu(); break;
         case "14": LoadWalletsMenu(); break;
         case "15": HomeworkMerkleAttackDemo(); break;
+        case "16": ExamDemo(); break;
+        case "17": CreateTokenMenu(); break;
         case "0":
             Console.WriteLine("Вихід...");
             return;
         default:
             Console.WriteLine("Невідома команда.");
             break;
+    }
+}
+
+Wallet? SelectWallet(string prompt)
+{
+    if (wallets.Count == 0)
+    {
+        Console.WriteLine("Жодного рахунку не знайдено. Спочатку створіть його (пункт 10).");
+        return null;
+    }
+
+    Console.WriteLine($"Доступні рахунки: {string.Join(", ", wallets.Keys)}");
+    Console.Write(prompt);
+    var name = Console.ReadLine();
+
+    if (name != null && wallets.TryGetValue(name, out var wallet))
+        return wallet;
+
+    Console.WriteLine("Рахунок не знайдено.");
+    return null;
+}
+
+void CreateTransactionMenu()
+{
+    try
+    {
+        var from = SelectWallet("Назва рахунку відправника: ");
+        if (from == null) return;
+
+        Console.Write("Отримувач (назва або адреса 0x...): ");
+        var recipientInput = Console.ReadLine() ?? string.Empty;
+        var to = ResolveRecipientAddress(recipientInput);
+
+        Console.Write("Валюта (BASE або інша): ");
+        var currency = Console.ReadLine()?.ToUpper() ?? "BASE";
+        if (string.IsNullOrWhiteSpace(currency)) currency = "BASE";
+
+        Console.Write("Сума: ");
+        var amount = decimal.Parse(Console.ReadLine()!);
+
+        Console.Write("Оплата майнеру в BASE: ");
+        var fee = decimal.Parse(Console.ReadLine()!);
+
+        var tx = blockChain._transactionService.CreateTransaction(from, to, amount, fee, currency: currency);
+        blockChain.AddTransactionToMempool(tx);
+        Console.WriteLine($"Переказ додано: {tx.Id}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Помилка: {ex.Message}");
+    }
+}
+
+void CreateTokenMenu()
+{
+    try
+    {
+        var owner = SelectWallet("Назва рахунку власника: ");
+        if (owner == null) return;
+
+        Console.Write("Назва (тикер) токена: ");
+        var ticker = Console.ReadLine()?.ToUpper() ?? "";
+
+        Console.Write("Загальний обсяг (Total Supply): ");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal supply))
+        {
+            Console.WriteLine("Невірний формат числа.");
+            return;
+        }
+
+        var tx = blockChain._transactionService.CreateToken(owner, ticker, supply);
+        blockChain.AddTransactionToMempool(tx);
+        Console.WriteLine($"Запит на випуск токена {ticker} додано. Не забудьте замайнити блок!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Помилка: {ex.Message}");
     }
 }
 
@@ -77,43 +156,26 @@ void PrintMenu()
     Console.WriteLine("══════════════════════════════════════════");
     Console.WriteLine("  Блокчейн:");
     Console.WriteLine("   1. Замайнити блок");
-    Console.WriteLine("   2. Створити транзакцію");
-    Console.WriteLine("   3. Показати баланс гаманця");
-    Console.WriteLine("   4. Перевірити валідність блокчейну");
+    Console.WriteLine("   2. Новий переказ (BASE або токени)");
+    Console.WriteLine("   3. Показати портфель");
+    Console.WriteLine("   4. Перевірити блокчейн");
     Console.WriteLine("   5. Показати весь блокчейн");
     Console.WriteLine("   6. Очистити блокчейн");
     Console.WriteLine("  Мережа (P2P):");
-    Console.WriteLine("   7. Синхронізуватися з піррами");
-    Console.WriteLine("   8. Демонстрація Merkle Tree / Proof");
-    Console.WriteLine("   9. Імітація атаки (підмінений блок)");
-    Console.WriteLine("  Гаманці:");
-    Console.WriteLine("   10. Створити новий гаманець");
-    Console.WriteLine("   11. Показати список гаманців");
-    Console.WriteLine("   12. Намайнити vanity-гаманець (за префіксом)");
-    Console.WriteLine("   13. Зберегти гаманці у файл");
-    Console.WriteLine("   14. Завантажити гаманці з файлу");
+    Console.WriteLine("   7. Синхронізувати з пірами");
+    Console.WriteLine("   8. Тест Merkle Tree / Proof");
+    Console.WriteLine("   9. Спроба атаки (фейк блок)");
+    Console.WriteLine("  Рахунки:");
+    Console.WriteLine("   10. Створити новий рахунок");
+    Console.WriteLine("   11. Показати список рахунків");
+    Console.WriteLine("   12. Намайнити vanity-рахунок");
+    Console.WriteLine("   13. Зберегти рахунки у файл");
+    Console.WriteLine("   14. Завантажити рахунки з файлу");
     Console.WriteLine("  ДЗ:");
-    Console.WriteLine("   15. Тест: Merkle Root і захист блоку від підміни");
+    Console.WriteLine("   15. Тест: Merkle Root");
+    Console.WriteLine("   16. Екзамен: Токени (Авто-демо)");
+    Console.WriteLine("   17. Створити Coin");
     Console.WriteLine("   0. Вихід");
-}
-
-Wallet? SelectWallet(string prompt)
-{
-    if (wallets.Count == 0)
-    {
-        Console.WriteLine("Немає жодного гаманця. Спочатку створіть гаманець (пункт 10).");
-        return null;
-    }
-
-    Console.WriteLine($"Доступні гаманці: {string.Join(", ", wallets.Keys)}");
-    Console.Write(prompt);
-    var name = Console.ReadLine();
-
-    if (name != null && wallets.TryGetValue(name, out var wallet))
-        return wallet;
-
-    Console.WriteLine("Гаманець із таким ім'ям не знайдено.");
-    return null;
 }
 
 string? ResolveRecipientAddress(string input)
@@ -141,39 +203,19 @@ void MineBlockMenu()
     }
 }
 
-void CreateTransactionMenu()
-{
-    try
-    {
-        var from = SelectWallet("Ім'я гаманця відправника: ");
-        if (from == null) return;
-
-        Console.Write("Отримувач (ім'я гаманця або адреса 0x...): ");
-        var recipientInput = Console.ReadLine() ?? string.Empty;
-        var to = ResolveRecipientAddress(recipientInput);
-
-        Console.Write("Сума транзакції: ");
-        var amount = decimal.Parse(Console.ReadLine()!);
-        Console.Write("Комісія: ");
-        var fee = decimal.Parse(Console.ReadLine()!);
-
-        var tx = blockChain._transactionService.CreateTransaction(from, to, amount, fee);
-        blockChain.AddTransactionToMempool(tx);
-        Console.WriteLine($"Транзакцію додано: {tx.Id}");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Помилка: {ex.Message}");
-    }
-}
 
 void ShowBalanceMenu()
 {
     var wallet = SelectWallet("Ім'я гаманця: ");
     if (wallet == null) return;
 
-    Console.WriteLine($"Баланс {wallet.Name}: {blockChain.GetBalance(wallet.Address)}");
-    Console.WriteLine($"Баланс з урахуванням мемпулу: {blockChain.GetPendingBalance(wallet.Address)}");
+    Console.WriteLine();
+    Console.WriteLine($"Портфель {wallet.Name}");
+
+    foreach (var item in blockChain.GetPortfolio(wallet.Address))
+    {
+        Console.WriteLine($"{item.Key} : {item.Value}");
+    }
 }
 
 void ValidateBlockchainMenu()
@@ -272,7 +314,6 @@ void AttackSimulationMenu()
     {
         var originalBlock = blockChain.Chain[^1];
 
-        // Глибока копія через JSON серіалізацію
         var blockJson = System.Text.Json.JsonSerializer.Serialize(originalBlock);
         var tamperedBlock = System.Text.Json.JsonSerializer.Deserialize<Block>(blockJson)!;
 
@@ -334,7 +375,12 @@ void ListWalletsMenu()
     Console.WriteLine("Список гаманців:");
     foreach (var (name, wallet) in wallets)
     {
-        Console.WriteLine($"  {name,-15} {wallet.Address}   баланс: {blockChain.GetBalance(wallet.Address)}");
+        Console.WriteLine(name);
+
+        foreach (var item in blockChain.GetPortfolio(wallet.Address))
+        {
+            Console.WriteLine($"   {item.Key} : {item.Value}");
+        }
     }
 }
 
@@ -399,7 +445,7 @@ void HomeworkMerkleAttackDemo()
 
         Console.WriteLine("\n[Крок 1] Майнимо блок, щоб Alice отримала винагороду (потрібні кошти для переказів)...");
         blockChain.MineBlock(alice.Address);
-        Console.WriteLine($"  Баланс Alice: {blockChain.GetBalance(alice.Address)}");
+        Console.WriteLine($"  Баланс Alice: {blockChain.GetBalance(alice.Address, "BASE")}");
 
         Console.WriteLine("\n[Крок 2] Створюємо транзакції Alice -> Bob...");
         var tx1 = blockChain._transactionService.CreateTransaction(alice, bob.Address, 1m, 0.1m);
@@ -442,4 +488,145 @@ void HomeworkMerkleAttackDemo()
     {
         Console.WriteLine($"Помилка виконання демонстрації: {ex.Message}");
     }
+
+}
+
+void ExamDemo()
+{
+    Console.Clear();
+
+    Console.WriteLine("================================");
+    Console.WriteLine("        TOKEN DEMO");
+    Console.WriteLine("================================");
+
+    var alice = wallets["Alice"];
+    var bob = wallets["Bob"];
+
+    Console.WriteLine("\n1. Alice майнить BASE");
+
+    while (blockChain.GetBalance(alice.Address, "BASE") < 150)
+    {
+        blockChain.MineBlock(alice.Address);
+    }
+
+    Console.WriteLine($"BASE = {blockChain.GetBalance(alice.Address, "BASE")}");
+
+
+
+    Console.WriteLine("\n2. Alice випускає ALICE_COIN");
+
+    try
+    {
+        var ico = blockChain._transactionService.CreateToken(
+            alice,
+            "ALICE_COIN",
+            1000);
+
+        blockChain.AddTransactionToMempool(ico);
+
+        blockChain.MineBlock(alice.Address);
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("УСПІШНО");
+        Console.ResetColor();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+
+
+
+    Console.WriteLine("\n3. Bob створює BOB_COIN");
+
+    try
+    {
+        var ico = blockChain._transactionService.CreateToken(
+            bob,
+            "BOB_COIN",
+            1000);
+
+        blockChain.AddTransactionToMempool(ico);
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(ex.Message);
+        Console.ResetColor();
+    }
+
+
+
+    Console.WriteLine("\n4. Bob краде ALICE_COIN");
+
+    try
+    {
+        while (blockChain.GetBalance(bob.Address, "BASE") < 150)
+        {
+            blockChain.MineBlock(bob.Address);
+        }
+
+        var fake = blockChain._transactionService.CreateToken(
+            bob,
+            "ALICE_COIN",
+            1000);
+
+        blockChain.AddTransactionToMempool(fake);
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(ex.Message);
+        Console.ResetColor();
+    }
+
+
+
+    Console.WriteLine("\n5. Alice передає Bob 200 ALICE_COIN");
+
+    try
+    {
+        var tx =
+            blockChain._transactionService.CreateTransaction(
+                alice,
+                bob.Address,
+                200,
+                1,
+                currency: "ALICE_COIN");
+
+        blockChain.AddTransactionToMempool(tx);
+
+        blockChain.MineBlock(alice.Address);
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("Переказ успішний");
+        Console.ResetColor();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+
+
+
+    Console.WriteLine();
+    Console.WriteLine("Alice");
+
+    foreach (var item in blockChain.GetPortfolio(alice.Address))
+    {
+        Console.WriteLine($"{item.Key} : {item.Value}");
+    }
+
+
+
+    Console.WriteLine();
+    Console.WriteLine("Bob");
+
+    foreach (var item in blockChain.GetPortfolio(bob.Address))
+    {
+        Console.WriteLine($"{item.Key} : {item.Value}");
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("Демонстрацію завершено.");
 }

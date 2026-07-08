@@ -15,7 +15,7 @@ namespace BlockChainP411NEW.Services
 
         public string GetBaseBlockData(Block block)
         {
-            // Використовуємо Merkle Root замість конкатенації всіх хешів
+
             string merkleRoot = GetMerkleRoot(block.Transactions);
             return $"{block.Index}{block.TimeStamp.ToString("O")}{merkleRoot}{block.PreviousHash}";
         }
@@ -27,21 +27,16 @@ namespace BlockChainP411NEW.Services
             return Convert.ToHexString(hashBytes);
         }
 
-        // ─── Частина 1 + 2: Побудова Merkle Root з візуалізацією ───────────────
-
         public string GetMerkleRoot(List<Transaction> transactions, bool verbose = false)
         {
             if (transactions == null || transactions.Count == 0)
                 return ComputeHash("EMPTY");
 
-            // Рівень 0 (листя): хешуємо кожну транзакцію
             var currentLevel = new List<string>();
             foreach (var tx in transactions)
                 currentLevel.Add(ComputeHash(tx.ToRowString()));
 
-            // ── Захист від CVE-2012-2459 ──
-            // Перевіряємо оригінальні хеші листя на дублікати
-            // (дублікат від самого алгоритму — легальний, від вхідних даних — атака)
+
             var leafSet = new HashSet<string>();
             foreach (var h in currentLevel)
             {
@@ -50,9 +45,6 @@ namespace BlockChainP411NEW.Services
                         "Виявлено спробу атаки CVE-2012-2459: дублювання транзакцій у дереві!");
             }
 
-            // verbose=false за замовчуванням: ця функція викликається на КОЖНЕ обчислення хешу блока
-            // (тобто мільйони разів під час майнінгу), тому друк у консоль тут за замовчуванням вимкнено.
-            // Передай verbose: true, якщо явно хочеш побачити побудову дерева (наприклад, у демо-команді).
             if (verbose)
                 Console.WriteLine($"  Level 0 (Листя): {currentLevel.Count} хешів");
 
@@ -64,7 +56,6 @@ namespace BlockChainP411NEW.Services
                 for (int i = 0; i < currentLevel.Count; i += 2)
                 {
                     string left = currentLevel[i];
-                    // Правило непарності: останній хеш без пари дублюється
                     string right = (i + 1 < currentLevel.Count)
                         ? currentLevel[i + 1]
                         : currentLevel[i];
@@ -85,15 +76,12 @@ namespace BlockChainP411NEW.Services
             return currentLevel[0];
         }
 
-        // ─── Частина 3: Генерація доказу (на стороні Ноди) ─────────────────────
-
         public List<(string Hash, bool IsLeft)> GetMerkleProof(
             List<Transaction> transactions, string targetTransactionId)
         {
             if (transactions == null || transactions.Count == 0)
                 throw new ArgumentException("Список транзакцій порожній.");
 
-            // Будуємо всі рівні дерева
             var levels = new List<List<string>>();
 
             var leaves = new List<string>();
@@ -115,7 +103,6 @@ namespace BlockChainP411NEW.Services
                 current = next;
             }
 
-            // Знаходимо індекс цільової транзакції
             string targetHash = null;
             int targetIndex = -1;
             for (int i = 0; i < transactions.Count; i++)
@@ -131,7 +118,6 @@ namespace BlockChainP411NEW.Services
             if (targetIndex == -1)
                 throw new ArgumentException($"Транзакцію з ID '{targetTransactionId}' не знайдено.");
 
-            // Збираємо доказ: піднімаємося по дереву, збираючи сусідів
             var proof = new List<(string Hash, bool IsLeft)>();
             int index = targetIndex;
 
@@ -142,23 +128,20 @@ namespace BlockChainP411NEW.Services
 
                 if (isRightChild)
                 {
-                    // Наш вузол — правий, сусід — лівий
                     proof.Add((levelHashes[index - 1], IsLeft: true));
                 }
                 else
                 {
-                    // Наш вузол — лівий, сусід — правий (або ми самі, якщо непарний)
                     int siblingIndex = (index + 1 < levelHashes.Count) ? index + 1 : index;
                     proof.Add((levelHashes[siblingIndex], IsLeft: false));
                 }
 
-                index /= 2; // Переходимо на рівень вище
+                index /= 2;
             }
 
             return proof;
         }
 
-        // ─── Частина 3: Перевірка доказу (на стороні Клієнта) ──────────────────
 
         public bool VerifyMerkleProof(
             string targetTxHash,
@@ -169,7 +152,6 @@ namespace BlockChainP411NEW.Services
 
             foreach (var (siblingHash, isLeft) in proof)
             {
-                // isLeft = true означає що сусід — лівий, тобто він іде ПЕРЕД нашим хешем
                 computedHash = isLeft
                     ? ComputeHash(siblingHash + computedHash)
                     : ComputeHash(computedHash + siblingHash);

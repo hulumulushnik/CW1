@@ -8,7 +8,6 @@ namespace BlockChainP411NEW.Models
         public int Index { get; set; }
         public DateTime TimeStamp { get; set; }
 
-        // Тепер блок містить список транзакцій замість одного рядка
         public List<Transaction> Transactions { get; set; }
 
         public string PreviousHash { get; set; }
@@ -21,7 +20,7 @@ namespace BlockChainP411NEW.Models
         {
             Index = index;
             TimeStamp = timeStamp;
-            Transactions = transactions; // Зберігаємо список
+            Transactions = transactions;
             PreviousHash = previousHash;
             Difficulty = difficulty;
             Hash = string.Empty;

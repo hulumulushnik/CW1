@@ -1,221 +1,230 @@
 [
   {
     "Index": 0,
-    "TimeStamp": "2026-07-04T08:39:35.1920579Z",
+    "TimeStamp": "2026-07-08T17:46:26.1276474Z",
     "Transactions": [],
     "PreviousHash": "0",
     "Nonce": 0,
-    "Hash": "26052193CF18E6B60AD753A09C77434FB80DC545D3EC42EEAF782CCD49C981AD",
+    "Hash": "07C4A70EC280A7C2A51A107A96DA39CAA6736A30B2DC7D38B3D674F198B69E2F",
     "MiningDuration": 0,
     "Difficulty": 4
   },
   {
     "Index": 1,
-    "TimeStamp": "2026-07-04T08:40:03.0551084Z",
+    "TimeStamp": "2026-07-08T17:48:27.6876157Z",
     "Transactions": [
       {
-        "Id": "8ff74eaa-b0d6-4016-a39e-0bacc2b591de",
+        "Id": "3309a214-536b-4eb9-ba7b-9faf9b05ff59",
         "From": "COINBASE",
-        "To": "0x819d781af1b416477e7a0f797eae4f569e715afb",
+        "To": "0xa0ce2bd9c98b8c9cc74028232ab5e8c8f22edd1e",
         "Amount": 50.0,
         "Fee": 0,
-        "TimeStamp": "2026-07-04T08:40:03.0550248Z",
+        "Currency": "BASE",
+        "Type": 0,
+        "TotalSupply": 0,
+        "TimeStamp": "2026-07-08T17:48:27.6875045Z",
         "SenderPublicKey": "",
         "Signature": null
       }
     ],
-    "PreviousHash": "26052193CF18E6B60AD753A09C77434FB80DC545D3EC42EEAF782CCD49C981AD",
-    "Nonce": 38357,
-    "Hash": "00006A807E16BFD8C3B0BB01D566F1A00DF2B8689FEF13A294F10EDF2655F1D3",
-    "MiningDuration": 1.1406894,
+    "PreviousHash": "07C4A70EC280A7C2A51A107A96DA39CAA6736A30B2DC7D38B3D674F198B69E2F",
+    "Nonce": 266353,
+    "Hash": "000089F8E61DE2A34E64976F55D1860645461CB27CBAFBA6203E3BB450773EC0",
+    "MiningDuration": 0.416486,
     "Difficulty": 4
   },
   {
     "Index": 2,
-    "TimeStamp": "2026-07-06T22:20:58.2057361Z",
+    "TimeStamp": "2026-07-08T17:48:42.0321026Z",
     "Transactions": [
       {
-        "Id": "09370d9f-18e0-4759-ab03-504cf0808810",
+        "Id": "7af86ef2-82b3-426d-a1b2-96863535dedd",
         "From": "COINBASE",
-        "To": "0xc0a3a6d09c7c1378bc6cbc0bffab9a9ad092f76c",
+        "To": "0xa0ce2bd9c98b8c9cc74028232ab5e8c8f22edd1e",
         "Amount": 50.0,
         "Fee": 0,
-        "TimeStamp": "2026-07-06T22:20:58.2055505Z",
+        "Currency": "BASE",
+        "Type": 0,
+        "TotalSupply": 0,
+        "TimeStamp": "2026-07-08T17:48:42.0320943Z",
         "SenderPublicKey": "",
         "Signature": null
       }
     ],
-    "PreviousHash": "00006A807E16BFD8C3B0BB01D566F1A00DF2B8689FEF13A294F10EDF2655F1D3",
-    "Nonce": 54263,
-    "Hash": "000026DC1B3A43BA70879ACFD83319726ED85AC012DF3519ADD9C944C203F213",
-    "MiningDuration": 1.719,
+    "PreviousHash": "000089F8E61DE2A34E64976F55D1860645461CB27CBAFBA6203E3BB450773EC0",
+    "Nonce": 18051,
+    "Hash": "0000943C138F07FE06AC0190F0F25F2CEF4C6D39C676EA46B3435C4B06772A75",
+    "MiningDuration": 0.0260341,
     "Difficulty": 4
   },
   {
     "Index": 3,
-    "TimeStamp": "2026-07-06T22:26:12.6030972Z",
+    "TimeStamp": "2026-07-08T17:48:44.4060403Z",
     "Transactions": [
       {
-        "Id": "23be42a1-43c2-46fa-9514-7c664222f93f",
+        "Id": "4a73498d-cec8-4282-819e-e8ac1f8cd4d3",
         "From": "COINBASE",
-        "To": "0xc0a3a6d09c7c1378bc6cbc0bffab9a9ad092f76c",
+        "To": "0xa0ce2bd9c98b8c9cc74028232ab5e8c8f22edd1e",
         "Amount": 25.0,
         "Fee": 0,
-        "TimeStamp": "2026-07-06T22:26:12.6030904Z",
+        "Currency": "BASE",
+        "Type": 0,
+        "TotalSupply": 0,
+        "TimeStamp": "2026-07-08T17:48:44.4060374Z",
         "SenderPublicKey": "",
         "Signature": null
       }
     ],
-    "PreviousHash": "000026DC1B3A43BA70879ACFD83319726ED85AC012DF3519ADD9C944C203F213",
-    "Nonce": 5230,
-    "Hash": "0000B6A1558E52CE845A8DA4FE565B40ACDF706A47FC54B88D2774147F3C8882",
-    "MiningDuration": 0.2563012,
+    "PreviousHash": "0000943C138F07FE06AC0190F0F25F2CEF4C6D39C676EA46B3435C4B06772A75",
+    "Nonce": 63504,
+    "Hash": "0000A1BE01127AD79CE4068D8595BE4CD495C282EB5CE7BA64999DE2B6078965",
+    "MiningDuration": 0.0648058,
     "Difficulty": 4
   },
   {
     "Index": 4,
-    "TimeStamp": "2026-07-06T23:17:26.0941009Z",
+    "TimeStamp": "2026-07-08T17:48:48.3264973Z",
     "Transactions": [
       {
-        "Id": "37a983c1-e21c-4d7e-998d-c22fe60d630a",
+        "Id": "59e149ff-4e81-4781-8e96-64db00ac7e1d",
         "From": "COINBASE",
-        "To": "0x68c250c2e7d67c238d0988fbfa55bba9dea33afc",
+        "To": "0xa0ce2bd9c98b8c9cc74028232ab5e8c8f22edd1e",
         "Amount": 25.0,
         "Fee": 0,
-        "TimeStamp": "2026-07-06T23:17:26.0939898Z",
+        "Currency": "BASE",
+        "Type": 0,
+        "TotalSupply": 0,
+        "TimeStamp": "2026-07-08T17:48:48.326494Z",
         "SenderPublicKey": "",
         "Signature": null
       }
     ],
-    "PreviousHash": "0000B6A1558E52CE845A8DA4FE565B40ACDF706A47FC54B88D2774147F3C8882",
-    "Nonce": 137482,
-    "Hash": "00002737F3B48A990B6B745D95DEC92144FD7CD4A7FCB05FA0CEADFFA3F6C7F3",
-    "MiningDuration": 5.2248706,
+    "PreviousHash": "0000A1BE01127AD79CE4068D8595BE4CD495C282EB5CE7BA64999DE2B6078965",
+    "Nonce": 92558,
+    "Hash": "0000287280AE6CCE1C43A55DFBED6C9EADA680E987EF5A022C5F897EB8FB7D2E",
+    "MiningDuration": 0.0886674,
     "Difficulty": 4
   },
   {
     "Index": 5,
-    "TimeStamp": "2026-07-07T18:15:34.261469Z",
+    "TimeStamp": "2026-07-08T17:49:12.3813694Z",
     "Transactions": [
       {
-        "Id": "3a7fa007-60dc-4a34-ab1e-04c08641baee",
+        "Id": "f5a124f1-e187-4eef-b0f8-d9f65a3bb9d9",
         "From": "COINBASE",
-        "To": "0xa47c5551263262beca48cb0ea04f7510115ff508",
-        "Amount": 25.0,
+        "To": "0xa0ce2bd9c98b8c9cc74028232ab5e8c8f22edd1e",
+        "Amount": 75.0,
         "Fee": 0,
-        "TimeStamp": "2026-07-07T18:15:34.2613151Z",
+        "Currency": "BASE",
+        "Type": 0,
+        "TotalSupply": 0,
+        "TimeStamp": "2026-07-08T17:49:12.3813645Z",
+        "SenderPublicKey": "",
+        "Signature": null
+      },
+      {
+        "Id": "a6a59c30-3751-43d4-94c4-007cc1ae1b92",
+        "From": "0xa0ce2bd9c98b8c9cc74028232ab5e8c8f22edd1e",
+        "To": "0xa0ce2bd9c98b8c9cc74028232ab5e8c8f22edd1e",
+        "Amount": 0,
+        "Fee": 100,
+        "Currency": "MEME",
+        "Type": 1,
+        "TotalSupply": 1000,
+        "TimeStamp": "2026-07-08T17:49:00.3258816Z",
+        "SenderPublicKey": "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQAEve2kHu4RTf3NswgOocYdbnndxkWZRDMUCGr+M/xWhaBfDqMKr+1PHDKLWAFOvaEH+8X3YbpLz+LuqQcVW7C0UAAkcP6+7gC3UbJZasYvepGfGStzVi9i8+7FKBmYIU328IGCeRd6oBMI2pngFpz8EKUREWOSyKZ7Tm6Jzc47R4Tl9c=",
+        "Signature": "ARcORimWcYSAxYPyiFUziMJE/OMGT5FUeRFjolYUfofb+twtnCSgasWPsBwzjLkGPp5kB71EX+79NhbRytKnVFC/AV8LVC+EFfmnqq3VUgWMIHTfVfJ7aX1xgo1u1jTQ34dbQB1rjrkpz6XxdO12lGBRTmW+aeSz5cgmx2QhVVfuaKA8"
+      },
+      {
+        "Id": "522890e4-fba6-4b1b-8e04-fd1740f4dc14",
+        "From": "COINBASE",
+        "To": "0xa0ce2bd9c98b8c9cc74028232ab5e8c8f22edd1e",
+        "Amount": 1000,
+        "Fee": 0,
+        "Currency": "MEME",
+        "Type": 0,
+        "TotalSupply": 0,
+        "TimeStamp": "2026-07-08T17:49:12.3813123Z",
         "SenderPublicKey": "",
         "Signature": null
       }
     ],
-    "PreviousHash": "00002737F3B48A990B6B745D95DEC92144FD7CD4A7FCB05FA0CEADFFA3F6C7F3",
-    "Nonce": 94398,
-    "Hash": "00008B923B76A2C91C97C8F7DE623AD6B03F8016048416A7F7BCBBE90B0FF97A",
-    "MiningDuration": 0.1078344,
+    "PreviousHash": "0000287280AE6CCE1C43A55DFBED6C9EADA680E987EF5A022C5F897EB8FB7D2E",
+    "Nonce": 5115,
+    "Hash": "000021F2B16AC29014B5B3A22A4322488EDE200A0EB581A544308269FD2EAF28",
+    "MiningDuration": 0.0044547,
     "Difficulty": 4
   },
   {
     "Index": 6,
-    "TimeStamp": "2026-07-07T18:15:35.4926208Z",
+    "TimeStamp": "2026-07-08T17:54:21.1437001Z",
     "Transactions": [
       {
-        "Id": "ca912704-5e1d-402f-b563-40c59fdd94d5",
+        "Id": "caa8bd92-eec1-4dfa-b836-01691f3ed833",
         "From": "COINBASE",
-        "To": "0xa47c5551263262beca48cb0ea04f7510115ff508",
-        "Amount": 12.5,
+        "To": "0xca9f4e0495334d47933e01cfd351da8303a7d5ed",
+        "Amount": 0.0,
         "Fee": 0,
-        "TimeStamp": "2026-07-07T18:15:35.4926168Z",
+        "Currency": "BASE",
+        "Type": 0,
+        "TotalSupply": 0,
+        "TimeStamp": "2026-07-08T17:54:21.1436591Z",
         "SenderPublicKey": "",
         "Signature": null
       }
     ],
-    "PreviousHash": "00008B923B76A2C91C97C8F7DE623AD6B03F8016048416A7F7BCBBE90B0FF97A",
-    "Nonce": 16089,
-    "Hash": "000067E7A8B3F0A590DF89EBD18A95EBC7AAA5BA1D04CF301D17B73C40EB5DF5",
-    "MiningDuration": 0.0165732,
+    "PreviousHash": "000021F2B16AC29014B5B3A22A4322488EDE200A0EB581A544308269FD2EAF28",
+    "Nonce": 47163,
+    "Hash": "00003F286E5447519BAB022A6622851818C8233EE4DB61A59EC0EEE421E68C87",
+    "MiningDuration": 0.0510148,
     "Difficulty": 4
   },
   {
     "Index": 7,
-    "TimeStamp": "2026-07-07T18:15:36.2010564Z",
+    "TimeStamp": "2026-07-08T17:54:25.1570469Z",
     "Transactions": [
       {
-        "Id": "7a3954ee-ecbd-4d0f-a152-f05f203d865b",
+        "Id": "2ff0c72e-9478-4ba7-a3d2-2a1cd9cfc3b9",
         "From": "COINBASE",
-        "To": "0xa47c5551263262beca48cb0ea04f7510115ff508",
-        "Amount": 12.5,
+        "To": "0xca9f4e0495334d47933e01cfd351da8303a7d5ed",
+        "Amount": 0.0,
         "Fee": 0,
-        "TimeStamp": "2026-07-07T18:15:36.2010307Z",
+        "Currency": "BASE",
+        "Type": 0,
+        "TotalSupply": 0,
+        "TimeStamp": "2026-07-08T17:54:25.1570415Z",
         "SenderPublicKey": "",
         "Signature": null
       }
     ],
-    "PreviousHash": "000067E7A8B3F0A590DF89EBD18A95EBC7AAA5BA1D04CF301D17B73C40EB5DF5",
-    "Nonce": 116937,
-    "Hash": "00005DA51611705822D919B7134B230DBF65E4E999C40DECE73A4AA03632E43F",
-    "MiningDuration": 0.1216707,
+    "PreviousHash": "00003F286E5447519BAB022A6622851818C8233EE4DB61A59EC0EEE421E68C87",
+    "Nonce": 52257,
+    "Hash": "00009586124C158E41C361C4C6424FD9A9C407A6CA3A36D1E31F222EF3BD41FB",
+    "MiningDuration": 0.0540695,
     "Difficulty": 4
   },
   {
     "Index": 8,
-    "TimeStamp": "2026-07-08T14:29:00.3558106Z",
+    "TimeStamp": "2026-07-08T17:54:27.2864537Z",
     "Transactions": [
       {
-        "Id": "931d0ef4-3ed3-4721-b33b-da9bca2cacac",
+        "Id": "c56c8412-9aac-41ec-86e3-bb945b75168d",
         "From": "COINBASE",
-        "To": "0x9f559435ae1095a9d56798e0288816dab8a68400",
-        "Amount": 12.5,
+        "To": "0xca9f4e0495334d47933e01cfd351da8303a7d5ed",
+        "Amount": 0.0,
         "Fee": 0,
-        "TimeStamp": "2026-07-08T14:29:00.3557122Z",
+        "Currency": "BASE",
+        "Type": 0,
+        "TotalSupply": 0,
+        "TimeStamp": "2026-07-08T17:54:27.2864502Z",
         "SenderPublicKey": "",
         "Signature": null
       }
     ],
-    "PreviousHash": "00005DA51611705822D919B7134B230DBF65E4E999C40DECE73A4AA03632E43F",
-    "Nonce": 68007,
-    "Hash": "0000268242A52FC9E8B04DAD4A9AFD26151DBEC50BAA9580147EA800A51DADC8",
-    "MiningDuration": 0.1134461,
-    "Difficulty": 4
-  },
-  {
-    "Index": 9,
-    "TimeStamp": "2026-07-08T14:29:00.5237622Z",
-    "Transactions": [
-      {
-        "Id": "4f1a475d-44c6-4cc3-b80a-445a567761c5",
-        "From": "COINBASE",
-        "To": "0x9f559435ae1095a9d56798e0288816dab8a68400",
-        "Amount": 6.40,
-        "Fee": 0,
-        "TimeStamp": "2026-07-08T14:29:00.523757Z",
-        "SenderPublicKey": "",
-        "Signature": null
-      },
-      {
-        "Id": "4189a32b-e062-418e-b2b4-0ba30fa44445",
-        "From": "0x9f559435ae1095a9d56798e0288816dab8a68400",
-        "To": "0x8fb906916667e0e3c4eb34e1486ce5a3f178a5fb",
-        "Amount": 2,
-        "Fee": 0.2,
-        "TimeStamp": "2026-07-08T14:29:00.5120401Z",
-        "SenderPublicKey": "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQA1yUgQlsestrQ8b1ScHWcHK40CHlJgic/XwGbQzyGwW4m7UG6PHkSEHLuT3KyQEKFPeOv4n3QCqmIQFK5PvzFM8QASTP2gNpefbykouA/cTrBCynevFVrgS/pQjKX/t4J/ZdRxB9wP8+G5BjfPLGoyyU4AjFyFV7zifKC/fDBuBExUcw=",
-        "Signature": "APARbnoN4X292vmrXAzZtTL0FjCl43FhHwMms/ST4vK4lUTdsloIKSeMVls1DZYAQIOPvFAJ8Q7dEZhkuaOC1aoMADn/QJABYq3ELObtoBTWIOSUUwi1vRc6Y5Bc+o4WGlHrE7iGOTQUGgmgiFq3WkSHtPBI4n6InHwzCxURvnstmKN1"
-      },
-      {
-        "Id": "c96ea0df-2b67-4b7e-83ed-60149435a796",
-        "From": "0x9f559435ae1095a9d56798e0288816dab8a68400",
-        "To": "0x8fb906916667e0e3c4eb34e1486ce5a3f178a5fb",
-        "Amount": 1,
-        "Fee": 0.1,
-        "TimeStamp": "2026-07-08T14:29:00.4951797Z",
-        "SenderPublicKey": "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQA1yUgQlsestrQ8b1ScHWcHK40CHlJgic/XwGbQzyGwW4m7UG6PHkSEHLuT3KyQEKFPeOv4n3QCqmIQFK5PvzFM8QASTP2gNpefbykouA/cTrBCynevFVrgS/pQjKX/t4J/ZdRxB9wP8+G5BjfPLGoyyU4AjFyFV7zifKC/fDBuBExUcw=",
-        "Signature": "ADZrYI52/WfmetTDnicmsNfiMq/NnbacSW1gAwI2JemqcCquV6Rrrc8ZN9fjMQ6CIBh2h1TBcQGn4vNe76XLUgBgATMAUQIZqHR6VLYxUadl7ekZpIG8WVVkGqiJ/1VUlzE14PAE+stM7XHGNdpPVV+SYRGXVm/uh3xa4z44jOugWwiY"
-      }
-    ],
-    "PreviousHash": "0000268242A52FC9E8B04DAD4A9AFD26151DBEC50BAA9580147EA800A51DADC8",
-    "Nonce": 225496,
-    "Hash": "0000AEB754D8301A9E43FFF0671993F3051D56B98489307CDB3EB1D4571A1EDB",
-    "MiningDuration": 0.3226532,
+    "PreviousHash": "00009586124C158E41C361C4C6424FD9A9C407A6CA3A36D1E31F222EF3BD41FB",
+    "Nonce": 80765,
+    "Hash": "00000B03AD1DF26D8260655E1674F483304995BB0E6D8E932D744CBDFD3F312C",
+    "MiningDuration": 0.0751604,
     "Difficulty": 4
   }
 ]

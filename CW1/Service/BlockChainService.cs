@@ -15,6 +15,9 @@ namespace BlockChainP411NEW.Services
     {
         public List<Block> Chain { get; set; } = new List<Block>();
         public List<Transaction> PendingTransactions { get; } = new List<Transaction>();
+        public const string BaseCurrency = "BASE";
+
+        public const decimal ICOFee = 100m;
         public HashSet<string> Nodes { get; } = new HashSet<string>();
 
         private readonly HashingService _hashingService = new();
@@ -114,9 +117,34 @@ namespace BlockChainP411NEW.Services
 
             if (transaction.From != "COINBASE")
             {
-                var senderBalance = GetPendingBalance(transaction.From);
-                if (senderBalance < transaction.Amount + transaction.Fee)
-                    throw new InvalidOperationException("Insufficient balance for the transaction (including pending).");
+                decimal tokenBalance =
+     GetPendingBalance(transaction.From,
+                       transaction.Currency);
+
+                decimal baseBalance =
+                    GetPendingBalance(transaction.From,
+                                      BaseCurrency);
+
+                if (transaction.Type == TransactionType.CreateToken)
+                {
+                    if (TokenExists(transaction.Currency))
+                        throw new InvalidOperationException(
+                            "Токен з такою назвою вже існує.");
+
+                    if (baseBalance < ICOFee)
+                        throw new InvalidOperationException(
+                            "Недостатньо BASE.");
+                }
+                else
+                {
+                    if (tokenBalance < transaction.Amount)
+                        throw new InvalidOperationException(
+                            "Недостатньо токенів.");
+
+                    if (baseBalance < transaction.Fee)
+                        throw new InvalidOperationException(
+                            "Недостатньо BASE для комісії.");
+                }
             }
 
             var duplicate = PendingTransactions.FirstOrDefault(t =>
@@ -189,6 +217,28 @@ namespace BlockChainP411NEW.Services
                 .OrderByDescending(t => t.Fee)
                 .Take(maxTransactionAmount)
                 .ToList();
+            List<Transaction> issuedTokens = new();
+
+            foreach (var tx in sortedTransactions)
+            {
+                if (tx.Type == TransactionType.CreateToken)
+                {
+                    issuedTokens.Add(
+
+                        new Transaction(
+                            "COINBASE",
+                            tx.From,
+                            tx.TotalSupply,
+                            Array.Empty<byte>())
+                        {
+                            Currency = tx.Currency,
+                            Fee = 0,
+                            Type = TransactionType.Transfer
+                        }
+
+                    );
+                }
+            }
 
             decimal totalFeesInBlock = sortedTransactions.Sum(t => t.Fee);
             decimal burnedFees = totalFeesInBlock * 0.5m;
@@ -200,7 +250,14 @@ namespace BlockChainP411NEW.Services
             var totalReward = currentReward + minerFeeShare;
 
             var rewardTransaction = new Transaction("COINBASE", minerAddress, totalReward, Array.Empty<byte>());
+            rewardTransaction.Currency = BaseCurrency;
+            rewardTransaction.Type = TransactionType.Transfer;
             sortedTransactions.Insert(0, rewardTransaction);
+
+            foreach (var token in issuedTokens)
+            {
+                sortedTransactions.Add(token);
+            }
 
             TotalMinted += currentReward;
 
@@ -236,6 +293,8 @@ namespace BlockChainP411NEW.Services
             TotalMinted += reward;
 
             var rewardTx = new Transaction("COINBASE", miner, reward, Array.Empty<byte>());
+            rewardTx.Currency = BaseCurrency;
+            rewardTx.Type = TransactionType.Transfer;
             var allTxs = new List<Transaction> { rewardTx };
             allTxs.AddRange(txs);
 
@@ -259,28 +318,100 @@ namespace BlockChainP411NEW.Services
             Chain.Add(genesisBlock);
         }
 
-        public decimal GetBalance(string address)
+        public bool TokenExists(string ticker)
         {
-            decimal balance = 0;
             foreach (var block in Chain)
             {
                 foreach (var tx in block.Transactions)
                 {
-                    if (tx.From == address) balance -= tx.Amount + tx.Fee;
-                    if (tx.To == address) balance += tx.Amount;
+                    if (tx.Type == TransactionType.CreateToken &&
+                        tx.Currency.Equals(ticker, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
                 }
             }
+
+            return false;
+        }
+
+        public decimal GetBalance(string address, string currency)
+        {
+            decimal balance = 0;
+
+            foreach (var block in Chain)
+            {
+                foreach (var tx in block.Transactions)
+                {
+                    if (tx.Currency != currency)
+                        continue;
+
+                    if (tx.From == address)
+                        balance -= tx.Amount;
+
+                    if (tx.To == address)
+                        balance += tx.Amount;
+
+                    if (tx.From == address &&
+                        currency == BaseCurrency)
+                    {
+                        balance -= tx.Fee;
+                    }
+                }
+            }
+
             return balance;
         }
 
-        public decimal GetPendingBalance(string address)
+        public Dictionary<string, decimal> GetPortfolio(string address)
         {
-            decimal balance = GetBalance(address);
+            Dictionary<string, decimal> portfolio = new();
+
+            foreach (var block in Chain)
+            {
+                foreach (var tx in block.Transactions)
+                {
+                    if (!portfolio.ContainsKey(tx.Currency))
+                        portfolio[tx.Currency] = 0;
+
+                    if (tx.From == address)
+                        portfolio[tx.Currency] -= tx.Amount;
+
+                    if (tx.To == address)
+                        portfolio[tx.Currency] += tx.Amount;
+
+                    if (tx.From == address)
+                    {
+                        if (!portfolio.ContainsKey(BaseCurrency))
+                            portfolio[BaseCurrency] = 0;
+
+                        portfolio[BaseCurrency] -= tx.Fee;
+                    }
+                }
+            }
+
+            return portfolio;
+        }
+
+        public decimal GetPendingBalance(string address, string currency)
+        {
+            decimal balance = GetBalance(address, currency);
+
             foreach (var tx in PendingTransactions)
             {
-                if (tx.From == address)
-                    balance -= tx.Amount + tx.Fee;
+                if (tx.Currency == currency &&
+                    tx.From == address)
+                {
+                    balance -= tx.Amount;
+                }
+
+                if (currency == BaseCurrency &&
+                    tx.From == address)
+                {
+                    balance -= tx.Fee;
+                }
             }
+
             return balance;
         }
 
@@ -359,9 +490,11 @@ namespace BlockChainP411NEW.Services
             Chain = externalChain;
 
             TotalMinted = Chain
-                .SelectMany(b => b.Transactions)
-                .Where(t => t.From == "COINBASE")
-                .Sum(t => t.Amount);
+    .SelectMany(b => b.Transactions)
+    .Where(t =>
+        t.From == "COINBASE" &&
+        t.Currency == BaseCurrency)
+    .Sum(t => t.Amount);
             Difficulty = Chain[^1].Difficulty;
 
             _fileStorageService.SaveBlockchain(Chain);
@@ -371,12 +504,33 @@ namespace BlockChainP411NEW.Services
 
         public bool ValidateEconomy()
         {
-            decimal minted = Chain
+            decimal mintedBase = Chain
                 .SelectMany(b => b.Transactions)
-                .Where(t => t.From == "COINBASE")
+                .Where(t => t.From == "COINBASE" && t.Currency == BaseCurrency)
                 .Sum(t => t.Amount);
 
-            return minted <= MaxSupply;
+            if (mintedBase > MaxSupply)
+                return false;
+
+            foreach (var block in Chain)
+            {
+                foreach (var tx in block.Transactions)
+                {
+                    if (tx.Type != TransactionType.CreateToken)
+                        continue;
+
+                    decimal mintedToken = Chain
+                        .SelectMany(b => b.Transactions)
+                        .Where(t => t.From == "COINBASE" &&
+                                    t.Currency == tx.Currency)
+                        .Sum(t => t.Amount);
+
+                    if (mintedToken > tx.TotalSupply)
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         private void AdjustDifficulty(Block latestBlock)
